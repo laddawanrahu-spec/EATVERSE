@@ -1,1 +1,276 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EATVERSE - อาหารตามสั่งแห่งอนาคต</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0b0f19;
+            --card-bg: #151c2c;
+            --accent-orange: #ff5e36;
+            --accent-green: #00e676;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg-dark); color: var(--text-main); padding-bottom: 70px; }
+
+        /* Navigation */
+        nav {
+            position: fixed; top: 0; width: 100%; background: rgba(11, 15, 25, 0.95);
+            backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;
+        }
+        nav .logo { font-size: 1.8rem; font-weight: bold; color: var(--accent-orange); letter-spacing: 1px; }
+        nav .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 1.5rem; transition: 0.3s; }
+        nav .nav-links a:hover { color: var(--accent-orange); }
+
+        /* Hero Section (หน้าแรก) */
+        .hero {
+            height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 0 1rem; background: linear-gradient(rgba(11,15,25,0.7), rgba(11,15,25,1)),
+            url('Gemini_Generated_Image_hca6i1hca6i1hca6.jpg') center/cover;
+            margin-top: 60px;
+        }
+        .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; color: #fff; text-shadow: 0 0 20px rgba(255,94,54,0.5); }
+        .hero p { font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin-bottom: 2rem; }
+        .btn-primary {
+            background: var(--accent-orange); color: white; padding: 0.8rem 2rem; border: none;
+            border-radius: 30px; font-size: 1.1rem; font-weight: bold; cursor: pointer; text-decoration: none;
+            box-shadow: 0 4px 15px rgba(255,94,54,0.4); transition: 0.3s;
+        }
+        .btn-primary:hover { transform: translateY(-3px); }
+
+        /* Section Styling */
+        .container { max-width: 1200px; margin: 4rem auto; padding: 0 1rem; }
+        .section-title { text-align: center; font-size: 2.2rem; margin-bottom: 2.5rem; position: relative; }
+        .section-title::after {
+            content: ''; width: 60px; height: 3px; background: var(--accent-orange);
+            position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+        }
+
+        /* Highlights & Features (จุดเด่นของเรา) */
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .feature-box {
+            background: var(--card-bg); padding: 2rem; border-radius: 12px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .feature-box i { font-size: 2.5rem; color: var(--accent-green); margin-bottom: 1rem; }
+
+        /* AI Assistant Banner */
+        .ai-banner {
+            background: linear-gradient(135deg, #1e1b4b, #312e81); border-radius: 16px; padding: 2rem;
+            margin: 3rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+            border: 1px solid #4338ca;
+        }
+
+        /* Menu Grid */
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .card {
+            background-color: var(--card-bg); border-radius: 16px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column;
+        }
+        .card img { width: 100%; height: 230px; object-fit: cover; }
+        .card-body { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+        .card-title { font-size: 1.3rem; font-weight: bold; }
+        .price { color: var(--accent-orange); font-size: 1.2rem; font-weight: bold; }
+        .ingredients { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; }
+        .health-badge {
+            background: rgba(0, 230, 118, 0.1); border-left: 3px solid var(--accent-green);
+            padding: 0.6rem; border-radius: 4px; font-size: 0.85rem; margin-top: auto;
+        }
+
+        /* Order Sticky Bar (ปุ่มกดสั่งอาหาร) */
+        .sticky-order-bar {
+            position: fixed; bottom: 0; width: 100%; background: #1e293b; padding: 1rem;
+            display: flex; justify-content: space-between; align-items: center; z-index: 99;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.5); border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--card-bg); padding: 2rem; border-radius: 12px; max-width: 450px; width: 90%; border: 1px solid var(--accent-orange); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo"><i class="fa-solid fa-utensils"></i> EATVERSE</div>
+        <div class="nav-links">
+            <a href="#home">หน้าแรก</a>
+            <a href="#features">จุดเด่นของเรา</a>
+            <a href="#menu">เมนูไฮไลท์</a>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <h1>EATVERSE</h1>
+        <p>เปิดมิติใหม่แห่งรสชาติ อาหารตามสั่งฟิวชันในยุคดิจิทัล แปลกใหม่ เข้มข้น คำนวณโภชนาการฉลาดด้วย AI</p>
+        <a href="#menu" class="btn-primary">สำรวจเมนูอาหาร</a>
+    </section>
+
+    <div class="container">
+        <section id="features" style="margin-bottom: 5rem;">
+            <h2 class="section-title">จุดเด่นของเรา</h2>
+            <div class="features">
+                <div class="feature-box">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <h3>เมนูสร้างสรรค์ไร้ขีดจำกัด</h3>
+                    <p style="color:var(--text-muted); margin-top:0.5rem;">ยกระดับอาหารตามสั่งเดิมๆ ให้กลายเป็นเมนูฟิวชันรูปโฉมใหม่</p>
+                </div>
+                <div class="feature-box">
+                    <i class="fa-solid fa-brain"></i>
+                    <h3>AI คำนวณโภชนาการ</h3>
+                    <p style="color:var(--text-muted); margin-top:0.5rem;">ทราบปริมาณแคลอรี สารอาหาร และคุณประโยชน์ต่อสุขภาพชัดเจน</p>
+                </div>
+                <div class="feature-box">
+                    <i class="fa-solid fa-bolt"></i>
+                    <h3>สั่งง่าย บริการไว</h3>
+                    <p style="color:var(--text-muted); margin-top:0.5rem;">ออกแบบระบบ UX/UI ให้ทำรายการสั่งซื้อเสร็จสิ้นภายในไม่กี่คลิก</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="ai-banner">
+            <div>
+                <h3><i class="fa-solid fa-robot"></i> AI Smart Order Assistant</h3>
+                <p style="color: var(--text-muted); margin-top: 0.3rem;">คิดไม่ออกใช่ไหม? ให้ AI วิเคราะห์โภชนาการและสุ่มเมนูที่เหมาะกับคุณวันนี้!</p>
+            </div>
+            <button class="btn-primary" style="background: var(--accent-green); color:#000;" onclick="openAiModal()">ให้ AI แนะนำเมนู</button>
+        </div>
+
+        <section id="menu">
+            <h2 class="section-title">เมนูไฮไลท์</h2>
+            <div class="menu-grid" id="menu-container"></div>
+        </section>
+    </div>
+
+    <div class="sticky-order-bar">
+        <div>
+            <span style="color: var(--text-muted); font-size: 0.9rem;">พร้อมสัมผัสความอร่อย?</span>
+            <div style="font-weight: bold;">เลือกเมนูโปรดของคุณแล้วสั่งได้ทันที</div>
+        </div>
+        <button class="btn-primary" onclick="alert('ระบบกำลังนำคุณไปยังหน้าชำระเงิน...')"><i class="fa-solid fa-cart-shopping"></i> กดสั่งอาหารทันที</button>
+    </div>
+
+    <div class="modal" id="aiModal">
+        <div class="modal-content">
+            <span style="float:right; cursor:pointer; font-size:1.5rem;" onclick="closeAiModal()">&times;</span>
+            <h3><i class="fa-solid fa-brain" style="color:var(--accent-orange);"></i> AI คำนวณเมนูแนะนำ</h3>
+            <div id="aiResult" style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin: 1.5rem 0;">กำลังประมวลผล...</div>
+            <button class="btn-primary" style="width: 100%;" onclick="generateAIMenu()">สุ่มเมนูใหม่อีกครั้ง</button>
+        </div>
+    </div>
+
+    <script>
+        const menuData = [
+            {
+                name: "1. ข้าวผัดเรนโบว์",
+                price: "79 ฿",
+                image: "Gemini_Generated_Image_ffammyffammyffam (1).jpg",
+                ingredients: "ข้าวหอมมะลิ, แครอท, ถั่วลันเตา, ข้าวโพด, บีทรูท, กะหล่ำม่วง, กุ้งสด",
+                calories: "420 kcal",
+                protein: "22g",
+                health: "อุดมด้วยวิตามิน A, C และไฟเบอร์จากผัก 5 สี"
+            },
+            {
+                name: "2. ข้าวกะเพราครีมชีส",
+                price: "95 ฿",
+                image: "Gemini_Generated_Image_pw6honpw6honpw6h.jpg",
+                ingredients: "หมูสับพรีเมียม, ใบกะเพราป่า, พริกแห้ง, ครีมชีสนำเข้า, ไข่ดาวกรอบ",
+                calories: "610 kcal",
+                protein: "26g",
+                health: "แคลเซียมสูง ตัดรสเผ็ดร้อนช่วยถนอมกระเพาะ"
+            },
+            {
+                name: "3. ไข่ดาวยักษ์ไส้ทะลัก",
+                price: "69 ฿",
+                image: "Gemini_Generated_Image_jzbdxsjzbdxsjzbd.jpg",
+                ingredients: "ไข่เป็ดฟาร์มปิด 3 ฟอง, ไส้หมูสับทรงเครื่องผัดพริกสด, พริกน้ำปลาโซเดียมต่ำ",
+                calories: "380 kcal",
+                protein: "20g",
+                health: "ไขมันดี (HDL) และโปรตีนเน้นๆ ช่วยเสริมสร้างกล้ามเนื้อ"
+            },
+            {
+                name: "4. เบอร์เกอร์กะเพราไข่ดาว",
+                price: "99 ฿",
+                image: "Gemini_Generated_Image_d48ld4d48ld4d48l.jpg",
+                ingredients: "ตัวเบอร์เกอร์ขนมปังโฮลวีต, เนื้อหมูบดผัดกะเพราเข้มข้น, ไข่ดาวเยิ้ม, ผักสลัด",
+                calories: "520 kcal",
+                protein: "24g",
+                health: "พลังงานสูง พร้อมคาร์โบไฮเดรตเชิงซ้อน เหมาะสำหรับวันลุยงาน"
+            },
+            {
+                name: "5. พิซซ่ากะเพราไข่ข้น",
+                price: "129 ฿",
+                image: "Gemini_Generated_Image_aolpxqaolpxqaolp.jpg",
+                ingredients: "แป้งโฮมเมดบางกรอบ, หน้าผัดกะเพราหมูสับ, ไข่ข้นนุ่มลิ้น, มอสซาเรลล่าชีส",
+                calories: "650 kcal",
+                protein: "25g",
+                health: "มีสารแคปไซซินช่วยกระตุ้นการเผาผลาญ"
+            },
+            {
+                name: "6. ข้าวกะเพราระเบิด",
+                price: "89 ฿",
+                image: "Gemini_Generated_Image_hca6i1hca6i1hca6.jpg",
+                ingredients: "เนื้อสับพรีเมียม, พริกจินดาแห้ง, พริกไทยสด, ใบกะเพราสายพันธุ์พื้นบ้าน",
+                calories: "580 kcal",
+                protein: "28g",
+                health: "สารต้านอนุมูลอิสระสูงจากสมุนไพรและพริกสด"
+            }
+        ];
+
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = menuData.map(item => `
+                <div class="card">
+                    <img src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/600x400?text=EATVERSE+Food'">
+                    <div class="card-body">
+                        <div class="card-header">
+                            <span class="card-title">${item.name}</span>
+                            <span class="price">${item.price}</span>
+                        </div>
+                        <div class="ingredients">
+                            <strong>ส่วนผสมหลัก:</strong> ${item.ingredients}
+                        </div>
+                        <div class="health-badge">
+                            <div><i class="fa-solid fa-heart-pulse"></i> <strong>ข้อมูลสุขภาพ:</strong></div>
+                            <div style="margin-top: 3px;">แคลอรี: ${item.calories} | โปรตีน: ${item.protein}</div>
+                            <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 3px;">${item.health}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAiModal() {
+            document.getElementById('aiModal').style.display = 'flex';
+            generateAIMenu();
+        }
+
+        function closeAiModal() {
+            document.getElementById('aiModal').style.display = 'none';
+        }
+
+        function generateAIMenu() {
+            const resultDiv = document.getElementById('aiResult');
+            resultDiv.innerHTML = "<i>AI กำลังประมวลผลเมนูที่เหมาะกับคุณ...</i>";
+            
+            setTimeout(() => {
+                const item = menuData[Math.floor(Math.random() * menuData.length)];
+                resultDiv.innerHTML = `
+                    <h4 style="color: var(--accent-orange); font-size: 1.1rem;">${item.name}</h4>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;"><strong>พลังงาน:</strong> ${item.calories}</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">"${item.health}"</p>
+                `;
+            }, 500);
+        }
+
+        renderMenu();
+    </script>
+</body>
+</html>
